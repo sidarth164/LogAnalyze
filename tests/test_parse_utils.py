@@ -1,5 +1,5 @@
+import unittest
 from datetime import datetime
-from unittest import TestCase
 
 from dateutil.tz import tzoffset
 
@@ -7,7 +7,7 @@ from exceptions.parse_exception import ParseError
 from utils import parse_utils, constants
 
 
-class Test(TestCase):
+class TestParseUtils(unittest.TestCase):
   def test_parse_valid(self):
     log, expected_log_dict = get_test_log_record()
     log_dict = parse_utils.parse(constants.LogFormat.CLF, log)
@@ -22,7 +22,7 @@ class Test(TestCase):
     # Perform test with invalid log_format passed
     valid_log, _ = get_test_log_record()
     self.assertRaises(ParseError, parse_utils.parse, 'invalid log format', valid_log)
-    
+
     # Perform test by passing non-string log
     self.assertRaises(TypeError, parse_utils.parse, constants.LogFormat.CLF, 123)
 
@@ -57,3 +57,7 @@ def get_invalid_test_log_records():
     # invalid request regex (method should be in all capitals)
     '127.0.0.1 - - [10/Nov/2000:13:55:36] -0700 "get /apache_pb.gif HTTP/1.0" 200 2326'
   ]
+
+
+if __name__ == 'main':
+  unittest.main()
