@@ -3,7 +3,7 @@ from datetime import datetime
 
 from dateutil.tz import tzoffset
 
-from exceptions.parse_exception import ParseError
+from utils.custom_exceptions import ParseError
 from utils import parse_utils, constants
 
 
@@ -57,7 +57,3 @@ def get_invalid_test_log_records():
     # invalid request regex (method should be in all capitals)
     '127.0.0.1 - - [10/Nov/2000:13:55:36] -0700 "get /apache_pb.gif HTTP/1.0" 200 2326'
   ]
-
-
-if __name__ == 'main':
-  unittest.main()

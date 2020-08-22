@@ -15,6 +15,8 @@ SIZE = r'(?P<size>\S+)'
 METHOD = r'(?P<method>[A-Z]+)'
 PATH_QUERY = r'(?P<path>[^?]+)(\?(?P<query>\S+))?'
 PROTOCOL = r'(?P<protocol>\S+)'
+FAIL_STATUS = r'[145]\d\d'
+SUCCESS_STATUS = r'[23]\d\d'
 
 # Common Regex formats
 REQUEST_REGEX = METHOD + SPACE + PATH_QUERY + SPACE + PROTOCOL

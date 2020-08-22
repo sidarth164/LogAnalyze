@@ -4,7 +4,7 @@ This file contains some utility methods which can be used be our core scripts
 from dateutil import parser
 import re
 
-from exceptions.parse_exception import ParseError
+from utils.custom_exceptions import ParseError
 from .constants import REQUEST_REGEX, HttpRequestMethod, HttpProtocolVersion, LogFormat
 
 
@@ -27,7 +27,7 @@ def parse(log_format, log):
   :type log: str
   :return: a dictionary of standard fields with well defined meanings
   :rtype: dict
-  :raises: exceptions.ParseError
+  :raises ParseError: if the log is not in the desired format or the log_format provided was invalid
   """
   if not isinstance(log_format, LogFormat):
     raise ParseError('Please pass a valid log_format of type %s' % LogFormat)
@@ -59,6 +59,9 @@ def parse(log_format, log):
 def get_request(req):
   """
   This method takes the string request line extracted from the log and parses it into a dict.
+  The request line should be of the format::
+
+    'METHOD /path/to/resource?queryParams HTTP/{valid_version}'
 
   The parsed dict contains the following fields:
     * :method: the http request method enum
@@ -70,7 +73,7 @@ def get_request(req):
   :type req: str
   :return: a well parsed dictionary with well defined meanings
   :rtype: dict
-  :raises: exceptions.ParseError
+  :raises ParseError: if the request line was not in desired format
   """
   try:
     req_match = re.match(REQUEST_REGEX, req)
