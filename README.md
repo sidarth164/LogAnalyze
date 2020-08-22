@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/sidarth164/LogAnalyze.svg?token=FYjCvjqVwECRHReK3ysP&branch=master)](https://travis-ci.com/sidarth164/LogAnalyze)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python Versions](https://img.shields.io/pypi/pyversions/Markdown.svg)](https://pypi.org/project/Markdown/)
-
+[![Coverage Status](https://coveralls.io/repos/github/sidarth164/LogAnalyze/badge.svg?branch=master)](https://coveralls.io/github/sidarth164/LogAnalyze?branch=master)
 # LogAnalyze
 This tool aims to provide a simple implementation for reading http log files, parsing it and methods to obtain some
 simple aggregate reports.
