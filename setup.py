@@ -2,8 +2,8 @@ from setuptools import setup
 
 setup(
   name='logAnalyze',
-  version='0.1',
-  packages=['logAnalyze.core','logAnalyze.utils'],
+  version='0.2',
+  packages=['logAnalyze', 'logAnalyze.core','logAnalyze.utils'],
   url='github.com/sidarth164/logAnalyze',
   license='Apache-2.0',
   author='Siddharth Agrawal',

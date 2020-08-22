@@ -56,22 +56,22 @@ if args.fail_pct:
   print("%.2f%%" % reporter.get_failed_pct())
   print('\n' * 2)
 
-if args.top_failed_resources > 0:
+if args.top_resources > 0:
   print_header('Requested Resources')
-  top_resources = reporter.get_top_requests(args.top_failed_resources)
+  top_resources = reporter.get_top_requests(args.top_resources)
   table = PrettyTable(['Id', 'Requested Resource', 'Number of requests'])
   for i, resource in enumerate(top_resources):
-    row = [i + 1, resource.resource_name, resource.num_requests_unsuccessful]
+    row = [i + 1, resource.resource_name, resource.get_num_requests()]
     table.add_row(row)
   print(table)
   print('\n' * 2)
 
-if args.top_resources > 0:
+if args.top_failed_resources > 0:
   print_header('Unsuccessfully Requested Resources')
-  top_resources = reporter.get_top_unsuccessful_requests(args.top_resources)
+  top_resources = reporter.get_top_unsuccessful_requests(args.top_failed_resources)
   table = PrettyTable(['Id', 'Requested Resource', 'Number of requests'])
   for i, resource in enumerate(top_resources):
-    row = [i + 1, resource.resource_name, resource.get_num_requests()]
+    row = [i + 1, resource.resource_name, resource.num_requests_unsuccessful]
     table.add_row(row)
   print(table)
   print('\n' * 2)
