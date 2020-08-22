@@ -8,3 +8,6 @@ install:
 script:
   - coverage run --source=logAnalyze.core,logAnalyze.utils -m unittest
   - coverage report --fail-under=90
+
+after_success:
+  - coveralls

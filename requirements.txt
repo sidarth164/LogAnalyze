@@ -4,3 +4,4 @@ rstr~=2.2.6
 prettytable~=0.7.2
 setuptools~=49.6.0
 coverage~=5.2.1
+coveralls~=2.1.2
