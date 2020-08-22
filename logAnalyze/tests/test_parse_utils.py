@@ -3,9 +3,9 @@ from datetime import datetime
 
 from dateutil.tz import tzoffset
 
-from src.utils.constants import LogFormat
-from src.utils.custom_exceptions import ParseError
-from src.utils.parse_utils import parse
+from logAnalyze.utils.constants import LogFormat
+from logAnalyze.utils.custom_exceptions import ParseError
+from logAnalyze.utils.parse_utils import parse
 
 
 class TestParseUtils(unittest.TestCase):

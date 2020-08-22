@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 import pytz
 
-from src.utils.constants import SUCCESS_STATUS, FAIL_STATUS
+from logAnalyze.utils.constants import SUCCESS_STATUS, FAIL_STATUS
 
 
 def get_clf_log(host, resource, status):

@@ -1,11 +1,11 @@
 import unittest
 
-from src.core.report_aggregator import ReportAggregator
-from src.test_utils.utils import get_random_int, get_random_host, get_random_status, \
+from logAnalyze.core.report_aggregator import ReportAggregator
+from logAnalyze.test_utils.utils import get_random_int, get_random_host, get_random_status, \
   get_random_element, get_clf_log, get_top_requests, get_random_string
-from src.utils.constants import LogFormat
-from src.utils.custom_exceptions import StatusError
-from src.utils.parse_utils import parse
+from logAnalyze.utils.constants import LogFormat
+from logAnalyze.utils.custom_exceptions import StatusError
+from logAnalyze.utils.parse_utils import parse
 
 
 class TestReportAggregator(unittest.TestCase):
@@ -32,6 +32,14 @@ class TestReportAggregator(unittest.TestCase):
     for i, resource in enumerate(top_resources):
       self.assertEqual(expected_top_resources[i]['name'], resource.resource_name)
       self.assertEqual(expected_top_resources[i]['num'], resource.get_num_requests())
+
+    # Validate the top 'x' resources requested unsuccessfully
+    x = get_random_int(5, 15)
+    expected_top_resources = get_top_requests(expected_report['resource_dict'], x, 2)
+    top_resources = reporter.get_top_unsuccessful_requests(x)
+    for i, resource in enumerate(top_resources):
+      self.assertEqual(expected_top_resources[i]['name'], resource.resource_name)
+      self.assertEqual(expected_top_resources[i]['num'], resource.num_requests_unsuccessful)
 
     # Validate the top 'x' hosts requested
     x = get_random_int(5, 15)

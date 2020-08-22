@@ -1,7 +1,7 @@
 import re
 
-from src.utils import constants
-from src.utils.custom_exceptions import StatusError
+from logAnalyze.utils import constants
+from logAnalyze.utils.custom_exceptions import StatusError
 
 
 class ReportAggregator:
@@ -82,6 +82,22 @@ class ReportAggregator:
     sorted_host_list = sorted(self.host_dict.items(),
                               key=lambda item: (item[1].get_num_requests(), item[1].host_name), reverse=True)
     return [v for k, v in sorted_host_list[:n]]
+
+  def get_top_unsuccessful_requests(self, n=10):
+    """
+    Get a list of the top n unsuccessfully requested resources
+
+    :param n: the number of resources to return
+    :type n: int
+    :return: The list of top n unsuccessfully requested resources
+    :rtype: list
+    """
+    # sort the dictionary in reverse order, first using the number of unsuccessful requests for each resource and
+    # then using the resource name
+    sorted_resource_list = sorted(self.resource_dict.items(),
+                                  key=lambda item: (item[1].num_requests_unsuccessful, item[1].resource_name),
+                                  reverse=True)
+    return [v for k, v in sorted_resource_list[:n]]
 
   def get_top_requests(self, n=10):
     """

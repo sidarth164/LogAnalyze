@@ -5,7 +5,7 @@ import re
 
 from dateutil import parser
 
-from src.utils.custom_exceptions import ParseError
+from logAnalyze.utils.custom_exceptions import ParseError
 from .constants import LogFormat
 
 

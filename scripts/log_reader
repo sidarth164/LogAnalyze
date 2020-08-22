@@ -1,15 +1,10 @@
 #!/usr/bin/env python
-import sys
-import os
-
-sys.path.append(os.path.join(sys.path[0], '../'))
-
 import argparse
 from math import floor
 from prettytable import PrettyTable
-from src.core.report_aggregator import ReportAggregator
-from src.utils.constants import LogFormat
-from src.utils.parse_utils import parse
+from logAnalyze.core.report_aggregator import ReportAggregator
+from logAnalyze.utils.constants import LogFormat
+from logAnalyze.utils.parse_utils import parse
 
 
 def print_header(string):
@@ -22,6 +17,8 @@ parser.add_argument('-H', '--top_hosts', metavar='H', type=int, default=0,
                     help='Display a report for the top H requesting hosts')
 parser.add_argument('-R', '--top_resources', metavar='R', type=int, default=0,
                     help='Display a report for the top R resources requested')
+parser.add_argument('-U', '--top_failed_resources', metavar='U', type=int, default=0,
+                    help='Display a report for the top U resources requested unsuccessfully')
 parser.add_argument('-N', '--top_resources_per_host', metavar='N', type=int, default=0,
                     help='For each host, display the top N requested resources')
 parser.add_argument('-S', '--success_pct', action='store_true', default=False,
@@ -59,9 +56,19 @@ if args.fail_pct:
   print("%.2f%%" % reporter.get_failed_pct())
   print('\n' * 2)
 
-if args.top_resources > 0:
+if args.top_failed_resources > 0:
   print_header('Requested Resources')
-  top_resources = reporter.get_top_requests(args.top_resources)
+  top_resources = reporter.get_top_requests(args.top_failed_resources)
+  table = PrettyTable(['Id', 'Requested Resource', 'Number of requests'])
+  for i, resource in enumerate(top_resources):
+    row = [i + 1, resource.resource_name, resource.num_requests_unsuccessful]
+    table.add_row(row)
+  print(table)
+  print('\n' * 2)
+
+if args.top_resources > 0:
+  print_header('Unsuccessfully Requested Resources')
+  top_resources = reporter.get_top_unsuccessful_requests(args.top_resources)
   table = PrettyTable(['Id', 'Requested Resource', 'Number of requests'])
   for i, resource in enumerate(top_resources):
     row = [i + 1, resource.resource_name, resource.get_num_requests()]
@@ -70,7 +77,7 @@ if args.top_resources > 0:
   print('\n' * 2)
 
 if args.top_hosts > 0:
-  print_header('Hosts')
+  print_header('Hosts Report')
   top_hosts = reporter.get_top_hosts()
   num_resources_per_host = args.top_resources_per_host
   if num_resources_per_host > 0:

@@ -4,8 +4,7 @@ python:
 
 install:
   - pip install -r requirements.txt
-  - pip install coverage
 
 script:
-  - coverage run --source=src.core,src.utils -m unittest
+  - coverage run --source=logAnalyze.core,logAnalyze.utils -m unittest
   - coverage report --fail-under=90
