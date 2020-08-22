@@ -1,7 +1,7 @@
 import re
 
-from utils.custom_exceptions import StatusError
-from utils import constants
+from src.utils import constants
+from src.utils.custom_exceptions import StatusError
 
 
 class ReportAggregator:
@@ -29,7 +29,7 @@ class ReportAggregator:
     :type log_dict: dict
     """
     host_name = log_dict['host']
-    resource_name = log_dict['request']['path']
+    resource_name = log_dict['request']
     status = log_dict['status']
     is_success = self.is_success(status)
     if is_success:

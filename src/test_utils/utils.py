@@ -8,14 +8,13 @@ from datetime import datetime, timedelta
 
 import pytz
 
-from utils.constants import HttpRequestMethod, HttpProtocolVersion, SUCCESS_STATUS, FAIL_STATUS
+from src.utils.constants import SUCCESS_STATUS, FAIL_STATUS
 
 
 def get_clf_log(host, resource, status):
-  return """{host} {identity} {user} [{datetime}] "{method} {resource} {protocol}" {status} {size}""" \
+  return """{host} {identity} {user} [{datetime}] "{request}" {status} {size}""" \
     .format(host=host, identity=get_random_id(), user=get_random_id(), datetime=get_random_datetime(),
-            method=get_random_req_method(), resource=resource, protocol=get_random_http_protocol(),
-            status=status, size=get_random_size())
+            request=resource, status=status, size=get_random_size())
 
 
 def get_random_host():
@@ -61,16 +60,6 @@ def get_random_datetime():
   end = datetime.now(random_tz)
   random_date = start + random.randrange((end - start) // step + 1) * step
   return random_date.strftime('%d/%b/%Y:%H:%M:%S %z')
-
-
-def get_random_http_protocol():
-  protocol = random.choice(list(HttpProtocolVersion))
-  return protocol.value
-
-
-def get_random_req_method():
-  method = random.choice(list(HttpRequestMethod))
-  return method.name
 
 
 def get_random_size(max_size=16 * 1024):

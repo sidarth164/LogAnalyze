@@ -1,10 +1,11 @@
 import unittest
-from core.report_aggregator import ReportAggregator
-from utils.constants import LogFormat
-from utils.custom_exceptions import StatusError
-from utils.parse_utils import parse
-from test_utils.utils import get_random_int, get_random_host, get_random_path, get_random_query, get_random_status, \
-  get_random_element, get_clf_log, get_top_requests
+
+from src.core.report_aggregator import ReportAggregator
+from src.test_utils.utils import get_random_int, get_random_host, get_random_status, \
+  get_random_element, get_clf_log, get_top_requests, get_random_string
+from src.utils.constants import LogFormat
+from src.utils.custom_exceptions import StatusError
+from src.utils.parse_utils import parse
 
 
 class TestReportAggregator(unittest.TestCase):
@@ -33,7 +34,7 @@ class TestReportAggregator(unittest.TestCase):
       self.assertEqual(expected_top_resources[i]['num'], resource.get_num_requests())
 
     # Validate the top 'x' hosts requested
-    x = get_random_int(5,15)
+    x = get_random_int(5, 15)
     expected_top_hosts = get_top_requests(expected_report['host_dict'], x, 0)
     top_hosts = reporter.get_top_hosts(x)
     for i, host in enumerate(top_hosts):
@@ -41,7 +42,7 @@ class TestReportAggregator(unittest.TestCase):
       self.assertEqual(expected_top_hosts[i]['num'], host.get_num_requests())
 
     # Validate the top 'x' resources requested by each host
-    x = get_random_int(3,10)
+    x = get_random_int(3, 10)
     for host in expected_report['host_dict']:
       expected_top_resources_per_host = get_top_requests(expected_report['host_dict'][host]['resource_dict'], x, 0)
       top_requests_per_host = reporter.host_dict[host].get_top_requests(x)
@@ -50,7 +51,7 @@ class TestReportAggregator(unittest.TestCase):
         self.assertEqual(expected_top_resources_per_host[i]['num'], req.get_num_requests())
 
   def test_status_error(self):
-    log = get_clf_log(get_random_host, get_random_path() + get_random_query(), '888')  # pass an invalid status
+    log = get_clf_log(get_random_host, get_random_string(10), '888')  # pass an invalid status
     reporter = ReportAggregator()
     log_dict = parse(LogFormat.CLF, log)
     self.assertRaises(StatusError, reporter.receive_log, log_dict)
@@ -65,7 +66,7 @@ def logs_and_report():
   resources_num = get_random_int(100, 150)
   resources = []  # list of available resources
   for _ in range(resources_num):
-    resources.append(get_random_path() + get_random_query())
+    resources.append(get_random_string(get_random_int(5, 15)))
 
   num_requests_successful = get_random_int(500, 1000)
   num_requests_unsuccessful = get_random_int(500, 1000)

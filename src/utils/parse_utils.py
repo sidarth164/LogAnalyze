@@ -1,11 +1,12 @@
 """
-This file contains some utility methods which can be used be our core scripts
+This file contains some utility methods which can be used be our core package
 """
-from dateutil import parser
 import re
 
-from utils.custom_exceptions import ParseError
-from .constants import REQUEST_REGEX, HttpRequestMethod, HttpProtocolVersion, LogFormat
+from dateutil import parser
+
+from src.utils.custom_exceptions import ParseError
+from .constants import LogFormat
 
 
 def parse(log_format, log):
@@ -17,7 +18,7 @@ def parse(log_format, log):
     * :identity: the client's identity (usually '-')
     * :user: the userid of the person requesting the document (usually '-')
     * :time: the datetime object representing the time when the request was received
-    * :request: the request dict containing parsed request line received from the client
+    * :request: the request line received from the client
     * :status: the http status code returned to the client
     * :size: size of the object returned to the client (measured in bytes)
 
@@ -38,9 +39,9 @@ def parse(log_format, log):
     identity = log_match.group('identity')
     user = log_match.group('user')
     time = get_datetime_from_clf_date(log_match.group('time'))
-    request = get_request(log_match.group('request'))
+    request = log_match.group('request')
     status = log_match.group('status')
-    size = int(log_match.group('size'))
+    size = log_match.group('size')
   except (AttributeError, ParseError, ValueError) as ex:
     raise ParseError('Could not parse the log of type [%s]: %s' % (log_format.value['name'], log)) from ex
 
@@ -54,43 +55,6 @@ def parse(log_format, log):
     'size': size
   }
   return parsed_log
-
-
-def get_request(req):
-  """
-  This method takes the string request line extracted from the log and parses it into a dict.
-  The request line should be of the format::
-
-    'METHOD /path/to/resource?queryParams HTTP/{valid_version}'
-
-  The parsed dict contains the following fields:
-    * :method: the http request method enum
-    * :path: the path string
-    * :query: the query dict
-    * :protocol: the HTTP protocol enum
-
-  :param req: the request string extracted from the log in raw form
-  :type req: str
-  :return: a well parsed dictionary with well defined meanings
-  :rtype: dict
-  :raises ParseError: if the request line was not in desired format
-  """
-  try:
-    req_match = re.match(REQUEST_REGEX, req)
-    method = HttpRequestMethod[req_match.group('method')]
-    path = req_match.group('path')
-    query = req_match.group('query')
-    protocol = HttpProtocolVersion(req_match.group('protocol'))
-  except (ValueError, KeyError, AttributeError) as ex:
-    raise ParseError('Could not parse the given request line %s' % req) from ex
-
-  parsed_req = {
-    'method': method,
-    'path': path,
-    'query': query,
-    'protocol': protocol
-  }
-  return parsed_req
 
 
 def get_datetime_from_clf_date(date):

@@ -7,5 +7,5 @@ install:
   - pip install coverage
 
 script:
-  - coverage run --source=core,utils -m unittest
+  - coverage run --source=src.core,src.utils -m unittest
   - coverage report --fail-under=90

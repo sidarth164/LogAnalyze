@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+import sys
+import os
+
+sys.path.append(os.path.join(sys.path[0], '../'))
+
+import argparse
+from math import floor
+from prettytable import PrettyTable
+from src.core.report_aggregator import ReportAggregator
+from src.utils.constants import LogFormat
+from src.utils.parse_utils import parse
+
+
+def print_header(string):
+  print(string)
+  print('-' * len(string))
+
+
+parser = argparse.ArgumentParser(description='Generate a report for an HTTP log file.')
+parser.add_argument('-H', '--top_hosts', metavar='H', type=int, default=0,
+                    help='Display a report for the top H requesting hosts')
+parser.add_argument('-R', '--top_resources', metavar='R', type=int, default=0,
+                    help='Display a report for the top R resources requested')
+parser.add_argument('-N', '--top_resources_per_host', metavar='N', type=int, default=0,
+                    help='For each host, display the top N requested resources')
+parser.add_argument('-S', '--success_pct', action='store_true', default=False,
+                    help='Display the percentage of successful requests (of the form 2xx, 3xx)')
+parser.add_argument('-F', '--fail_pct', action='store_true', default=False,
+                    help='Display the percentage of unsuccessful requests (of the form 1xx, 4xx, 5xx)')
+parser.add_argument('--file', type=str, required=True,
+                    help='The absolute path of the log file whose report is to be generated')
+parser.add_argument('--encoding', type=str, default='utf-8',
+                    help='The file encoding to be used while reading it')
+
+args = parser.parse_args()
+
+# Create an instance of the report aggregator class
+reporter = ReportAggregator()
+
+# Read the file line by line, and pass each to the report aggregator
+with open(args.file, 'r', encoding=args.encoding) as log_file:
+  for log in log_file:
+    log_dict = parse(LogFormat.CLF, log)
+    reporter.receive_log(log_dict)
+
+# Now close the file
+log_file.close()
+
+# Now generate the reports using the aggregator class
+
+if args.success_pct:
+  print_header('Successful Requests')
+  print("%.2f%%" % reporter.get_success_pct())
+  print('\n' * 2)
+
+if args.fail_pct:
+  print_header('Unsuccessful Requests')
+  print("%.2f%%" % reporter.get_failed_pct())
+  print('\n' * 2)
+
+if args.top_resources > 0:
+  print_header('Requested Resources')
+  top_resources = reporter.get_top_requests(args.top_resources)
+  table = PrettyTable(['Id', 'Requested Resource', 'Number of requests'])
+  for i, resource in enumerate(top_resources):
+    row = [i + 1, resource.resource_name, resource.get_num_requests()]
+    table.add_row(row)
+  print(table)
+  print('\n' * 2)
+
+if args.top_hosts > 0:
+  print_header('Hosts')
+  top_hosts = reporter.get_top_hosts()
+  num_resources_per_host = args.top_resources_per_host
+  if num_resources_per_host > 0:
+    table = PrettyTable(
+      ['Id', 'Domain Name/IP', 'Requested Resource', 'Number of Requests per Resource', 'Total number of Requests'])
+    for i, host in enumerate(top_hosts):
+      top_resources_per_host = host.get_top_requests(num_resources_per_host)
+      middle = floor(len(top_resources_per_host) / 2)
+      for j, resource in enumerate(top_resources_per_host):
+        if j == middle:
+          table.add_row(
+            [i + 1, host.host_name, resource.resource_name, resource.get_num_requests(), host.get_num_requests()])
+        else:
+          table.add_row(['', '', resource.resource_name, resource.get_num_requests(), ''])
+      table.add_row(['', '', '', '', ''])
+  else:
+    table = PrettyTable(['Id', 'Domain Name/IP', 'Total number of Requests'])
+    for i, host in enumerate(top_hosts):
+      table.add_row([i + 1, host.host_name, host.get_num_requests()])
+  print(table)
+  print('\n' * 2)
